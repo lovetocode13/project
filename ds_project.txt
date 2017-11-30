@@ -1,0 +1,496 @@
+#include <stdio.h>
+#include <conio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct node
+ {
+    char data[10];
+    struct node *left,*right;
+    int ht;
+ }node;
+node * root=NULL;
+node *insert(node *,char[]);
+void printLevelOrder(node* );
+void printLevel(node* , int );
+int search(node * , char[],char[]);
+struct node * ancestor(node *,char[],char[]);
+node *Delete(node *,char[]);
+void inorder(node *);
+int height( node *);
+node *rotateright(node *);
+node *rotateleft(node *);
+node *RR(node *);
+node *LL(node *);
+node *LR(node *);
+node *RL(node *);
+int BF(node *);
+
+int main()
+ {
+    //node *root=NULL;
+   int n,q,i,flag,op,l,op1,j,k,pos,winner;
+   char a[3][3]={'1','2','3','4','5','6','7','8','9'};
+   int b[3][3]={0,0,0,0,0,0,0,0,0};
+   char z[10],var,x[10];
+   printf("\n enter 1 to implement avl");
+   printf("\n enter 2 to play game");
+   printf("\n enter 3 to exit");
+   scanf("%d",&n);
+   switch(n)
+   {
+   case 1:
+   	//clrscr();
+   
+     do
+     {
+	  printf("\n1)Create:");
+	  printf("\n2)Insert:");
+	  printf("\n3)Delete:");
+	  printf("\n4)Print:");
+	  printf("\n5)Hierarical Order");
+      printf("\n6)Print ancestor");
+	  printf("\n7)Quit:");
+	  printf("\n\nEnter Your Choice:");
+	  scanf("%d",&op);
+
+	  switch(op)
+	  {
+	    case 1:
+		 printf("\nEnter no. of elements:");
+		 scanf("%d",&n);
+		 printf("\nEnter tree data:");
+		 root=NULL;
+		 for(i=0;i<n;i++)
+		 {
+		  scanf("%s",&z);
+		  root=insert(root,z);
+		 }
+		break;
+
+	    case 2:
+		 printf("\nEnter a data:");
+		 scanf("%s",&z);
+		 root=insert(root,z);
+		break;
+	    
+		case 3:
+		 printf("\nEnter a data:");
+		 scanf("%s",x);
+		 root=Delete(root,x);
+		break;
+
+	    case 4: 
+		 printf("\n\nPrint in dictionary order:\n");
+		 inorder(root);
+		 printf("\n");
+		break;
+		    
+		case 5:
+		 printf("\nPrint hierrical order");
+		 printLevelOrder(root);
+		break; 
+		    
+		case 6: 
+		 printf("\nCommon ancestor:");
+	     char r[10];char s[10];
+	     printf("entr names of two children");
+	     scanf("%s",&r);
+	     scanf("%s",&s);
+		 struct node *res=ancestor(root,r,s);
+		 printf("%s",res->data);
+		break;
+	  }
+     }
+	 while(op!=7);
+    break;
+    case 2:
+    	//clrscr();
+     n=1;
+     for(i=0;i<3;i++)
+     {
+      for(j=0;j<3;j++)
+      {
+       printf(" %c",a[i][j]);
+      }
+      printf("\n");
+     }
+     for(k=0;k<9;k++)
+     {
+      if(n%2==0)
+      {
+       var='o';
+      }
+      else
+      {
+       var='x';
+      }
+       printf("\n enter the position");
+       scanf("%d",&pos);
+       switch(pos)
+       {
+	    case 1:
+	     if(b[0][0]==0)
+	     {
+	      a[0][0]=var;
+	      b[0][0]=1;
+	     }
+	    break;
+	    case 2:
+	     if(b[0][1]==0)
+	     {
+	      a[0][1]=var;
+	      b[0][1]=1;
+	     }
+	    break;
+	    case 3:
+	     if(b[0][2]==0)
+	     {
+	      a[0][2]=var;
+	      b[0][2]=1;
+	     }
+	    break;
+	    case 4:
+	     if(b[1][0]==0)
+	     {
+	      a[1][0]=var;
+	      b[1][0]=1;
+	     }
+	    break;
+	    case 5:
+	     if(b[1][1]==0)
+	     {
+	      a[1][1]=var;
+	      b[1][1]=1;
+	     }
+	    break;
+	    case 6:
+	     if(b[1][2]==0)
+	     {
+	      a[1][2]=var;
+	      b[1][2]=1;
+	     }
+	    break;
+	    case 7:
+	     if(b[2][0]==0)
+	     {
+	      a[2][0]=var;
+	      b[2][0]=1;
+	     }
+	    break;
+	    case 8:
+	     if(b[2][1]==0)
+	     {
+	      a[2][1]=var;
+	      b[2][1]=1;
+	     }
+	    break;
+	    case 9:
+	     if(b[2][2]==0)
+	     {
+	      a[2][2]=var;
+	      b[2][2]=1;
+	     }
+	    break;
+	    default:
+	     printf("\n invalid entry");
+       }
+       //clrscr();
+       for(i=0;i<3;i++)
+       {
+	     for(j=0;j<3;j++)
+	      {
+	        printf(" %c",a[i][j]);
+	      }
+	     printf("\n");
+       }
+       if((((a[0][0]==a[1][1]) && (a[0][0]=='x')) && ((a[1][1]==a[2][2]) && (a[1][1]=='x'))) || (((a[0][2]==a[1][1]) && (a[0][2]=='x')) && ((a[1][1]==a[2][0]) && (a[2][0]=='x'))))
+       {
+        winner=1;
+        break;
+	   }
+       else if((((a[0][0]==a[1][1]) && (a[0][0]=='o')) && ((a[1][1]==a[2][2]) && (a[1][1]=='o'))) || (((a[0][2]==a[1][1]) && (a[0][2]=='o')) && ((a[1][1]==a[2][0]) && (a[2][0]=='o'))))
+       { 
+	    winner=2;
+        break;
+	   }
+       else
+       {
+        flag=1;
+        for(l=0;l<3;l++)
+         {
+	      if((((a[l][0]==a[l][1]) && (a[l][0]=='x')) && ((a[l][1]==a[l][2]) && (a[l][2]=='x'))) || (((a[0][l]==a[1][l]) && (a[0][l]=='x')) && ((a[1][l]==a[2][l]) && (a[1][l]=='x'))))
+	       {
+		     winner=1;
+	         flag=0;
+	         break;
+		   }
+	      else if((((a[l][0]==a[l][1]) && (a[l][0]=='o')) && ((a[l][1]==a[l][2]) && (a[l][2]=='o'))) || (((a[0][l]==a[1][l]) && (a[0][l]=='o')) && ((a[1][l]==a[2][l]) && (a[1][l]=='o'))))
+	       {
+		    winner=2;
+	        flag=0;
+	        break;
+		   }
+	      else
+	       winner=0;
+         }
+        if(flag==0)
+        break;
+      }
+      n++;
+     }
+    
+    if(winner==0)
+    printf("\n its a draw");
+    else
+    printf("\n winner is %d",winner);
+    break;
+    case 3:
+    	 exit(0);
+    }
+    getch();
+    return 0;
+}
+
+node* insert(node *T,char x[10])
+{
+    if(T==NULL)
+    {
+	T=(node*)malloc(sizeof(node));
+	strcpy(T->data,x);
+	T->left=NULL;
+	T->right=NULL;
+    }
+    else
+	if(strcmp(x,T->data)>0)       // insert in right subtree
+	{
+	    T->right=insert(T->right,x);
+	    if(BF(T)==-2)
+		if(strcmp(x,T->right->data)>0)
+		    T=RR(T);
+		else
+		    T=RL(T);
+	}
+	else
+	    if(strcmp(x,T->data)<0)
+	    {
+		T->left=insert(T->left,x);
+		if(BF(T)==2)
+		    if(strcmp(x,T->left->data)<0)
+			T=LL(T);
+		    else
+			T=LR(T);
+            }
+        
+        T->ht=height(T);
+        
+        return(T);
+}
+ 
+node * Delete(node *T,char x[])
+{
+    node *p;
+    
+    if(T==NULL)
+    {
+        return NULL;
+    }
+    else
+        if(strcmp(x,T->data)>0)        // insert in right subtree
+        {
+            T->right=Delete(T->right,x);
+            if(BF(T)==2)
+                if(BF(T->left)>=0)
+                    T=LL(T);
+                else
+                    T=LR(T);
+        }
+        else
+            if(strcmp(x,T->data)<0)
+            {
+                T->left=Delete(T->left,x);
+                if(BF(T)==-2)    //Rebalance during windup
+                    if(BF(T->right)<=0)
+                        T=RR(T);
+                    else
+                        T=RL(T);
+            }
+            else
+            {
+                //data to be deleted is found
+                if(T->right!=NULL)
+                {    //delete its inorder succesor
+                    p=T->right;
+                    
+                    while(p->left!= NULL)
+                        p=p->left;
+                    
+                    strcpy(T->data,p->data);
+                    T->right=Delete(T->right,p->data);
+                    
+                    if(BF(T)==2)//Rebalance during windup
+                        if(BF(T->left)>=0)
+                            T=LL(T);
+                        else
+                            T=LR(T);
+                }
+                else
+                    return(T->left);
+            }
+    T->ht=height(T);
+    return(T);
+}
+ 
+int height(node *T)
+{
+    int lh,rh;
+    if(T==NULL)
+        return(0);
+    
+    if(T->left==NULL)
+        lh=0;
+    else
+        lh=1+T->left->ht;
+        
+    if(T->right==NULL)
+        rh=0;
+    else
+        rh=1+T->right->ht;
+    
+    if(lh>rh)
+        return(lh);
+    
+    return(rh);
+}
+node * rotateright(node *x)
+{
+    node *y;
+    y=x->left;
+    x->left=y->right;
+    y->right=x;
+    x->ht=height(x);
+    y->ht=height(y);
+    return(y);
+}
+node * rotateleft(node *x)
+{
+    node *y;
+    y=x->right;
+    x->right=y->left;
+    y->left=x;
+    x->ht=height(x);
+    y->ht=height(y);
+    
+    return(y);
+}
+node * RR(node *T)
+{
+    T=rotateleft(T);
+    return(T);
+}
+node * LL(node *T)
+{
+    T=rotateright(T);
+    return(T);
+}
+node * LR(node *T)
+{
+    T->left=rotateleft(T->left);
+    T=rotateright(T);
+    
+    return(T);
+}
+node * RL(node *T)
+{
+    T->right=rotateright(T->right);
+    T=rotateleft(T);
+    return(T);
+}
+int BF(node *T)
+{
+    int lh,rh;
+    if(T==NULL)
+        return(0);
+ 
+    if(T->left==NULL)
+        lh=0;
+    else
+        lh=1+T->left->ht;
+ 
+    if(T->right==NULL)
+        rh=0;
+    else
+        rh=1+T->right->ht;
+ 
+    return(lh-rh);
+}
+/*void preorder(node *T)
+{
+    if(T!=NULL)
+    {
+        printf("%d(Bf=%d)",T->data,BF(T));
+        preorder(T->left);
+        preorder(T->right);
+    }
+}*/
+void inorder(node *T)
+{
+	//printf("%s",T);
+    if(T!=NULL)
+    {
+        inorder(T->left);
+        printf("%s(Bf=%d)",T->data,BF(T));
+        inorder(T->right);
+    }
+}
+
+
+struct node *ancestor(struct node* temp, char n1[], char n2[])
+{
+    if (temp== NULL) return NULL;
+ 
+    // If both n1 and n2 are smaller than root, then LCA lies in left
+    if (strcmp(temp->data,n1) >0 && strcmp(temp->data,n2)>0)
+        return ancestor(temp->left, n1, n2);
+ 
+    // If both n1 and n2 are greater than root, then LCA lies in right
+    if (strcmp(temp->data,n1)<0 && strcmp(temp->data,n2)<0)
+        return ancestor(temp->right, n1, n2);
+ 
+   return temp;
+}
+/* Function to print level order traversal a tree*/
+void printLevelOrder(node* ptr)
+{
+    int h;
+    h = height(ptr);
+    int i;
+    for(i=1; i<=h+1; i++)
+        printLevel(ptr, i);
+}
+
+/* Print nodes at a given level */
+void printLevel(node* temp, int level)
+{
+    if(temp == NULL)
+        return;
+    if(level == 1)
+        printf("%s ", temp->data);
+    else if (level > 1)
+    {
+        printLevel(temp->left, level-1);
+        printLevel(temp->right, level-1);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
